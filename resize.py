@@ -3,7 +3,7 @@ import os
 import sys
 
 
-def ResizeScreen(x,y):
+def resize_screen(x, y):
     clientos = platform.system()
     if clientos == 'Windows':
         os.system("mode {rows},{columns}".format(rows=x,columns=y))

@@ -145,20 +145,20 @@ class CursesWindow(object):
             return
 
     def write(self, text, noappend=False):
-        if noappend == False:
+        if not noappend:
             self.scrollbacknosplit.append(text)
-        if self.box == True:
+        if self.box:
             bufferlen = self.height - 2
             startx = 1
         else:
             bufferlen = self.height
             startx = 0
         lines = wordwrap(text, self.width - startx - startx)
-        if noappend == False:
+        if not noappend:
             for line in lines:
                 self.scrollback.append(line)
 
-        if self.keeplog == False:
+        if not self.keeplog:
             self.scrollback = self.scrollback[-bufferlen:]
             self.scrollbacknosplit = self.scrollbacknosplit[-bufferlen:]
         if len(self.scrollback) > self.loglength and self.keeplog == True:
@@ -213,7 +213,7 @@ def wordwrap(text, length):
                 else:
                     lines.append(linestring)
                     lines.append(text[x:])
-                return (lines)
+                return lines
             elif nextspace == -1 and len(text[x:]) > length:
                 while len(text) > 0:
                     if len(linestring) + len(text[x:]) > length:
@@ -232,7 +232,7 @@ def wordwrap(text, length):
                             if len(linestring.strip()) > 0:
                                 lines.append(linestring)
                             return lines
-                return (lines)
+                return lines
             if len(linestring) + len(text[x:x + nextspace]) <= length:
                 linestring = linestring + text[x:x + nextspace]
             else:
@@ -342,7 +342,6 @@ def InputLoop(uiobj):
                 if newyoffset != 0:
                     uiobj.inputwin.move(newy - 3, 0)
                     uiobj.sidebar.resize(uiobj.sidebar.height - newyoffset, uiobj.sidebar.minwidth)
-                #				uiobj.inputwin.resize(uiobj.inputwin.height, newx)
                 uiobj.mainwindow.resize(uiobj.mainwindow.height - newyoffset, newx - uiobj.sidebar.minwidth)
                 uiobj.sidebar.move(uiobj.sidebar.loc_y, newx - uiobj.sidebar.minwidth)
                 refreshscreen(uiobj)
@@ -367,7 +366,6 @@ def InputLoop(uiobj):
                 uiobj.inbuf = uiobj.commandhist[uiobj.commandpointer]
                 uiobj.bufposition = len(uiobj.inbuf)
             if len(uiobj.inbuf) >= uiobj.width - 3:
-                tempbuf = uiobj.inbuf[-uiobj.width + 2:]
                 uiobj.inputwin.drawinput(uiobj.inbuf, uiobj.width - 2)
                 uiobj.screen.move(uiobj.height - 2, uiobj.width - 1)
             else:
@@ -380,7 +378,7 @@ def InputLoop(uiobj):
                 uiobj.commandpointer = len(uiobj.commandhist) - 1
                 uiobj.inbuf = uiobj.commandhist[uiobj.commandpointer]
                 uiobj.bufposition = len(uiobj.inbuf)
-            elif uiobj.commandpointer < len(uiobj.commandhist) and uiobj.commandpointer > 0:
+            elif len(uiobj.commandhist) > uiobj.commandpointer > 0:
                 uiobj.commandpointer -= 1
                 if uiobj.commandpointer < 0:
                     uiobj.commandpointer = 0
