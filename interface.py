@@ -26,7 +26,7 @@ def ResizeScreen(x, y):
 class InterfaceObject(object):
     def __init__(self):
         self.bufposition = 0
-        self.commandhist = []
+        self.commandhistory = []
         self.screen = curses.initscr()
         self.mainwindow = None
         self.sidebar = None
@@ -55,11 +55,11 @@ class CursesWindow(object):
             self.loglength = height
         else:
             self.loglength = loglength
-        if showcursor == False:
+        if not showcursor:
             self.window.leaveok(1)
         else:
             self.window.leaveok(0)
-        if box == True:
+        if box:
             self.loglength -= 2
         self.keeplog = keeplog
         self.window.keypad(0)
@@ -91,13 +91,13 @@ class CursesWindow(object):
         self.window.clear()
         self.height = height
         self.width = width
-        if self.box == True:
+        if self.box:
             bufferlen = self.height - 2
             startx = 1
         else:
             bufferlen = self.height
             startx = 0
-        if self.keeplog == False:
+        if not self.keeplog:
             self.scrollbacknosplit = self.scrollbacknosplit[-bufferlen:]
         self.scrollback = []
         if len(self.scrollbacknosplit) > 0:
@@ -184,7 +184,7 @@ class CursesWindow(object):
             return
 
 
-def initWindows(uiobj):
+def init_windows(uiobj):
     curses.noecho()
     curses.cbreak()
     uiobj.screen.keypad(True)
@@ -258,7 +258,7 @@ def wordwrap(text, length):
     return lines
 
 
-def InputLoop(uiobj):
+def input_loop(uiobj):
     uiobj.inbuf = ""
     uiobj.screen.move(uiobj.height - 2, 1)
     while True:
@@ -329,7 +329,7 @@ def InputLoop(uiobj):
                             refreshscreen(uiobj)
                             break
                         elif ch == ord('n') or ch == ord('N'):
-                            killCurses(uiobj)
+                            killcurses(uiobj)
                             clientos = platform.system()
                             if clientos == 'Windows':
                                 os.system("cls")
@@ -412,7 +412,7 @@ def InputLoop(uiobj):
 
         elif ch == curses.KEY_ENTER or ch == 10 or ch == 13:
             if uiobj.inbuf.lower() == "quit":
-                killCurses(uiobj)
+                killcurses(uiobj)
                 exit(0)
             uiobj.commandhist.append(uiobj.inbuf)
             uiobj.mainwindow.write(uiobj.inbuf)
@@ -474,18 +474,20 @@ def InputLoop(uiobj):
                 uiobj.screen.move(uiobj.height - 2, len(uiobj.inbuf) + 1)
 
 
-def killCurses(uiobj):
+def killcurses(uiobj):
     curses.nocbreak()
     uiobj.screen.keypad(0)
     curses.echo()
     curses.endwin()
 
 
-if "idlelib" in sys.modules:
-    print("You cannot run this program from IDLE")
-    input("Press enter to exit")
-    exit(0)
-interface = InterfaceObject()
-initWindows(interface)
-InputLoop(interface)
-killCurses(interface)
+def launch_interface():
+    if "idlelib" in sys.modules:
+        print("You cannot run this program from IDLE")
+        input("Press enter to exit")
+        exit(0)
+
+    interface = InterfaceObject()
+    init_windows(interface)
+    input_loop(interface)
+    killcurses(interface)

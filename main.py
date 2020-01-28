@@ -24,6 +24,7 @@ class Character:
         self.inventory = inventory
         self.location = gamestate.roomdict[location]
 
+
 class Command:
     def __init__(self, name, min_argc, function, docs):
         self.name = name
