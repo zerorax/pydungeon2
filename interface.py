@@ -6,14 +6,14 @@ import sys
 from time import sleep
 
 
-def refreshscreen(uiobj):
+def refresh_screen(uiobj):
     uiobj.screen.refresh()
     uiobj.mainwindow.refresh()
     uiobj.sidebar.refresh()
     uiobj.inputwin.refresh()
 
 
-def ResizeScreen(x, y):
+def resize_screen(x, y):
     clientos = platform.system()
     if clientos == 'Windows':
         os.system("mode {rows},{columns}".format(rows=x, columns=y))
@@ -195,7 +195,7 @@ def init_windows(uiobj):
     uiobj.sidebar = CursesWindow(uiobj, height - 3, width - uiobj.mainwindow.width, 0, uiobj.mainwindow.width, 20, 25)
     uiobj.inputwin = CursesWindow(uiobj, 3, width, uiobj.mainwindow.height, 0, 3, 3, showcursor=True)
 
-    refreshscreen(uiobj)
+    refresh_screen(uiobj)
 
 
 def wordwrap(text, length):
@@ -277,7 +277,7 @@ def input_loop(uiobj):
                         uiobj.inputwin.move(newy - 3, 0)
                         uiobj.sidebar.resize(uiobj.sidebar.height - newyoffset, uiobj.sidebar.minwidth)
                     uiobj.inputwin.resize(3, newx)
-                    refreshscreen(uiobj)
+                    refresh_screen(uiobj)
                     uiobj.width = newx
                     uiobj.height = newy
                 else:
@@ -311,7 +311,7 @@ def input_loop(uiobj):
                             del tempwindow
                             del uiobj.screen
                             curses.endwin()
-                            ResizeScreen(windowx, windowy)
+                            resize_screen(windowx, windowy)
                             sleep(0.1)  # let the window resize
                             uiobj.screen = curses.initscr()
                             curses.cbreak()
@@ -326,7 +326,7 @@ def input_loop(uiobj):
                             uiobj.inputwin.window.box()
                             uiobj.mainwindow.redraw_scrollback()
                             uiobj.sidebar.redraw_scrollback()
-                            refreshscreen(uiobj)
+                            refresh_screen(uiobj)
                             break
                         elif ch == ord('n') or ch == ord('N'):
                             killcurses(uiobj)
@@ -344,7 +344,7 @@ def input_loop(uiobj):
                     uiobj.sidebar.resize(uiobj.sidebar.height - newyoffset, uiobj.sidebar.minwidth)
                 uiobj.mainwindow.resize(uiobj.mainwindow.height - newyoffset, newx - uiobj.sidebar.minwidth)
                 uiobj.sidebar.move(uiobj.sidebar.loc_y, newx - uiobj.sidebar.minwidth)
-                refreshscreen(uiobj)
+                refresh_screen(uiobj)
                 uiobj.width = newx
                 uiobj.height = newy
                 continue
@@ -421,7 +421,7 @@ def input_loop(uiobj):
             uiobj.inbuf = ""
             uiobj.bufposition = 0
             uiobj.commandpointer = -2
-            refreshscreen(uiobj)
+            refresh_screen(uiobj)
             continue
 
         elif ch == curses.KEY_BACKSPACE or ch == 127 or ch == 800 or ch == 8:
@@ -474,7 +474,7 @@ def input_loop(uiobj):
                 uiobj.screen.move(uiobj.height - 2, len(uiobj.inbuf) + 1)
 
 
-def killcurses(uiobj):
+def kill_interface():
     curses.nocbreak()
     uiobj.screen.keypad(0)
     curses.echo()
@@ -490,4 +490,5 @@ def launch_interface():
     interface = InterfaceObject()
     init_windows(interface)
     input_loop(interface)
-    killcurses(interface)
+
+
